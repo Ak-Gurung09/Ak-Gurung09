@@ -1,0 +1,22 @@
+# Core pipeline (pip wheels include GDAL via rasterio; no separate GDAL install needed)
+numpy>=1.26
+scipy>=1.11
+rasterio>=1.3.9
+h5py>=3.10          # NISAR GCOV is HDF5
+scikit-learn>=1.3   # Gaussian mixture model
+shapely>=2.0
+pyproj>=3.6
+PyYAML>=6.0
+Pillow>=10.0
+
+# Dashboard
+streamlit>=1.50
+folium>=0.17
+pandas>=2.0
+
+# Data discovery / download (network; needs a free NASA Earthdata Login to download)
+asf_search>=8.0
+earthaccess>=0.9
+
+# Optional: grounded plain-language rewrite of explanations (python -m changelens.pipeline --llm)
+# anthropic>=1.0

@@ -1,0 +1,69 @@
+# PRIMARY PATHWAY: NISAR L2 GCOV (PROVISIONAL) before/after pair.
+# Copy this file, fill in every TODO from the granule metadata, then set status: ready.
+# Find candidate pairs with:
+#   python scripts/find_pairs.py nisar-gcov --bbox W S E N --event YYYY-MM-DD
+case_id: TODO_nisar_flood_case          # short, lowercase, no spaces
+title: "TODO: River / region, month year (NISAR L-band)"
+status: template                        # change to 'ready' once the TODOs are filled
+hazard: flood
+
+aoi:
+  bbox: [TODO_W, TODO_S, TODO_E, TODO_N]   # lon/lat, EPSG:4326; keep it < ~50 x 50 km
+
+pre:
+  format: nisar_gcov
+  path: data/raw/TODO_pre_granule.h5
+  polarization: HH                      # co-pol: best for open water; HV is optional context
+  frequency: A
+  source:
+    dataset: "NISAR L2 Geocoded Polarimetric Covariance (GCOV), PROVISIONAL"
+    short_name: NISAR_L2_GCOV_PROVISIONAL_V1
+    granule_id: TODO
+    url: TODO                           # the ASF download URL you used
+    doc: https://nisar-docs.asf.alaska.edu/gcov/
+    maturity: PROVISIONAL (calibrated; validated at a limited set of sites)
+    label: Primary NASA SAR data
+
+post:
+  format: nisar_gcov
+  path: data/raw/TODO_post_granule.h5   # SAME track, frame and pass direction as 'pre'
+  polarization: HH
+  frequency: A
+  source:
+    dataset: "NISAR L2 Geocoded Polarimetric Covariance (GCOV), PROVISIONAL"
+    short_name: NISAR_L2_GCOV_PROVISIONAL_V1
+    granule_id: TODO
+    url: TODO
+    doc: https://nisar-docs.asf.alaska.edu/gcov/
+    maturity: PROVISIONAL (calibrated; validated at a limited set of sites)
+    label: Primary NASA SAR data
+
+ancillary:
+  hand:                                  # strongly recommended: suppresses shadow / hillside false alarms
+    path: data/raw/TODO_glo30_hand_tile.tif
+    source:
+      dataset: "ASF Global 30 m Height Above Nearest Drainage (GLO-30 HAND), from Copernicus GLO-30 DEM"
+      url: https://registry.opendata.aws/glo-30-hand/
+      label: Supporting non-SAR data
+
+reference:                               # independent check (different sensor, C-band); optional
+  type: dswx_s1
+  description: "OPERA DSWx-S1 new water (closest dates to our pre/post images)"
+  pre_wtr: data/raw/TODO_pre_DSWx-S1_B01_WTR.tif
+  post_wtr: data/raw/TODO_post_DSWx-S1_B01_WTR.tif
+  include_inundated_vegetation: false
+  pre_source:
+    dataset: "OPERA Dynamic Surface Water Extent from Sentinel-1 (DSWx-S1) V1"
+    short_name: OPERA_L3_DSWX-S1_V1
+    granule_id: TODO
+    label: NASA-derived SAR product
+  post_source:
+    dataset: "OPERA Dynamic Surface Water Extent from Sentinel-1 (DSWx-S1) V1"
+    short_name: OPERA_L3_DSWX-S1_V1
+    granule_id: TODO
+    label: NASA-derived SAR product
+
+params:                                  # defaults are in changelens/detect.py (DetectionParams)
+  delta_db: 3.0
+  hand_max_m: 15.0
+  min_area_m2: 20000

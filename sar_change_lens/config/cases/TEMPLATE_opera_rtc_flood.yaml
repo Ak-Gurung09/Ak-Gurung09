@@ -1,0 +1,56 @@
+# FALLBACK PATHWAY: OPERA RTC-S1 (NASA JPL product made from Copernicus Sentinel-1).
+# Coverage: North America (see docs). Same pipeline, GeoTIFF reader instead of HDF5.
+#   python scripts/find_pairs.py opera-rtc --bbox W S E N --event YYYY-MM-DD
+case_id: TODO_opera_flood_case
+title: "TODO: River / region, month year (OPERA RTC-S1, C-band)"
+status: template
+hazard: flood
+
+aoi:
+  bbox: [TODO_W, TODO_S, TODO_E, TODO_N]
+
+pre:
+  format: geotiff
+  path: data/raw/TODO_OPERA_L2_RTC-S1_..._VV.tif   # same burst ID as 'post'
+  polarization: VV
+  acquired: "TODO-YYYY-MM-DDTHH:MM:SS"
+  # invalid_mask_path: data/raw/TODO_..._mask.tif   # layover/shadow mask, if you download it
+  # invalid_mask_values: [TODO]                      # check the RTC-S1 product spec for codes
+  source:
+    dataset: "OPERA Radiometric Terrain Corrected SAR Backscatter from Sentinel-1 (RTC-S1) V1"
+    short_name: OPERA_L2_RTC-S1_V1
+    granule_id: TODO
+    url: TODO
+    label: NASA-derived SAR product
+    note: "Contains modified Copernicus Sentinel data (ESA); processed by NASA JPL OPERA"
+
+post:
+  format: geotiff
+  path: data/raw/TODO_OPERA_L2_RTC-S1_..._VV.tif
+  polarization: VV
+  acquired: "TODO-YYYY-MM-DDTHH:MM:SS"
+  source:
+    dataset: "OPERA Radiometric Terrain Corrected SAR Backscatter from Sentinel-1 (RTC-S1) V1"
+    short_name: OPERA_L2_RTC-S1_V1
+    granule_id: TODO
+    url: TODO
+    label: NASA-derived SAR product
+    note: "Contains modified Copernicus Sentinel data (ESA); processed by NASA JPL OPERA"
+
+ancillary:
+  hand:
+    path: data/raw/TODO_glo30_hand_tile.tif
+    source:
+      dataset: "ASF Global 30 m HAND (GLO-30 HAND)"
+      url: https://registry.opendata.aws/glo-30-hand/
+      label: Supporting non-SAR data
+
+# NOTE: DSWx-S1 is itself derived from RTC-S1, so agreement here is a consistency
+# check against NASA's validated algorithm, not an independent validation.
+reference:
+  type: dswx_s1
+  description: "OPERA DSWx-S1 new water (same sensor: consistency check, not independent)"
+  pre_wtr: data/raw/TODO_pre_DSWx-S1_B01_WTR.tif
+  post_wtr: data/raw/TODO_post_DSWx-S1_B01_WTR.tif
+  pre_source: {dataset: "OPERA DSWx-S1 V1", short_name: OPERA_L3_DSWX-S1_V1, granule_id: TODO, label: NASA-derived SAR product}
+  post_source: {dataset: "OPERA DSWx-S1 V1", short_name: OPERA_L3_DSWX-S1_V1, granule_id: TODO, label: NASA-derived SAR product}
