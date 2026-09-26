@@ -1,0 +1,16 @@
+# Runtime dependencies. Install with:  pip install -r requirements.txt
+#
+# Tested (Sept 2026) on Linux with Python 3.10-3.13:
+#   mediapipe 1.0.1, opencv-contrib-python 5.0.0.93, numpy 2.4.6, pyautogui 0.9.54
+# and with the older stack used on Intel Macs:
+#   mediapipe 0.10.21, opencv-contrib-python 4.11.0.86, numpy 1.26.4
+#
+# OpenCV: install ONLY opencv-contrib-python. MediaPipe already depends on it;
+# adding opencv-python too puts two conflicting copies of cv2 in one environment.
+#
+# Intel Macs: mediapipe 0.10.30+ ships no Intel-Mac wheels. Use Python 3.12 or
+# older and pip automatically falls back to mediapipe 0.10.21.
+mediapipe>=0.10.21
+opencv-contrib-python>=4.8
+numpy>=1.24
+pyautogui>=0.9.54
