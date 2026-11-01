@@ -1,0 +1,91 @@
+# NEPAL, 2025: Terai flooding in Bara and Rautahat districts (Madhesh Province), 3-5 October 2025.
+#
+# Why this event: extreme rain on 3-5 October 2025 (more than 330 mm reported in Rautahat)
+# flooded the flat Terai plains of Rautahat, Bara and Parsa. Flat, low-lying ground is
+# where radar flood mapping works; Nepal's hills and mountains (Ilam landslides, the
+# Rasuwa glacial flood of 8 July 2025) are not suitable (layover, shadow, narrow valleys).
+#
+# Why NOT NISAR: NISAR's calibrated (PROVISIONAL) data starts 17 June 2026, and its
+# pre-calibration BETA data starts 17 October 2025, after this flood, and is "not
+# intended for use in scientific research". So the radar observations here are
+# Copernicus Sentinel-1 (ESA), processed to terrain-corrected backscatter by NASA's
+# ASF HyP3 service. OPERA RTC-S1 does not cover Nepal (North America only).
+#
+# Steps (need a free NASA Earthdata Login):
+#   python scripts/find_pairs.py s1-grd --bbox 84.85 26.75 85.60 27.20 --event 2025-10-05 --days-after 12
+#   python scripts/find_pairs.py s1-grd --bbox 84.85 26.75 85.60 27.20 --event 2025-10-05 --days-after 12 --hyp3-rtc 0
+#   python scripts/find_pairs.py opera-dswx --bbox 84.85 26.75 85.60 27.20 --event 2025-10-05 --days-after 12
+# then fill in every TODO below, set status: ready, and run
+#   python -m changelens.pipeline --case config/cases/nepal_bara_rautahat_oct2025_s1.yaml
+case_id: nepal_bara_rautahat_oct2025
+title: "Nepal Terai (Bara and Rautahat), October 2025 flood - Sentinel-1 via NASA ASF HyP3"
+status: template                        # set to 'ready' once the TODOs are filled
+hazard: flood
+
+aoi:
+  # Approximate box over the Bara-Rautahat Terai, about 75 x 50 km. Its southern edge
+  # crosses the border into Bihar, India. Adjust after viewing the first image.
+  bbox: [84.85, 26.75, 85.60, 27.20]
+
+pre:
+  format: geotiff
+  path: data/raw/TODO_pre_RTC_folder/TODO_VV.tif   # HyP3 RTC output, *_VV.tif
+  polarization: VV
+  acquired: "TODO-YYYY-MM-DDTHH:MM:SS"             # from the Sentinel-1 scene name
+  # invalid_mask_path: data/raw/TODO_pre_RTC_folder/TODO_ls_map.tif
+  # invalid_mask_values: [TODO]   # look up the layover/shadow codes in the HyP3 RTC product guide
+  source:
+    dataset: "Copernicus Sentinel-1 IW GRD (ESA), RTC-processed by NASA ASF HyP3 (gamma0, power, 30 m)"
+    granule_id: TODO_S1_scene_name
+    url: https://hyp3-docs.asf.alaska.edu/guides/rtc_product_guide/
+    processing: "ASF HyP3 On Demand RTC, Copernicus GLO-30 DEM"
+    label: NASA-affiliated or partner data
+    note: "Contains modified Copernicus Sentinel data (2025). The observation is ESA's; the RTC processing is NASA ASF's."
+
+post:
+  format: geotiff
+  path: data/raw/TODO_post_RTC_folder/TODO_VV.tif  # SAME relative orbit and pass direction as 'pre'
+  polarization: VV
+  acquired: "TODO-YYYY-MM-DDTHH:MM:SS"
+  source:
+    dataset: "Copernicus Sentinel-1 IW GRD (ESA), RTC-processed by NASA ASF HyP3 (gamma0, power, 30 m)"
+    granule_id: TODO_S1_scene_name
+    url: https://hyp3-docs.asf.alaska.edu/guides/rtc_product_guide/
+    processing: "ASF HyP3 On Demand RTC, Copernicus GLO-30 DEM"
+    label: NASA-affiliated or partner data
+    note: "Contains modified Copernicus Sentinel data (2025). The observation is ESA's; the RTC processing is NASA ASF's."
+
+ancillary:
+  hand:                                  # masks hill-slope shadow; the Terai itself is low HAND
+    path: data/raw/TODO_glo30_hand_tile.tif
+    source:
+      dataset: "ASF Global 30 m Height Above Nearest Drainage (GLO-30 HAND), from Copernicus GLO-30 DEM"
+      url: https://registry.opendata.aws/glo-30-hand/
+      label: Supporting non-SAR data
+
+# NASA JPL OPERA DSWx-S1 is designed to be near-global; confirm Nepal tiles exist for these dates.
+# It is also made from Sentinel-1, so agreement here is a consistency check, not independent validation.
+reference:
+  type: dswx_s1
+  description: "OPERA DSWx-S1 new water (same sensor family: consistency check, not independent)"
+  pre_wtr: data/raw/TODO_pre_DSWx-S1_B01_WTR.tif
+  post_wtr: data/raw/TODO_post_DSWx-S1_B01_WTR.tif
+  include_inundated_vegetation: false
+  pre_source:
+    dataset: "OPERA Dynamic Surface Water Extent from Sentinel-1 (DSWx-S1) V1"
+    short_name: OPERA_L3_DSWX-S1_V1
+    granule_id: TODO
+    label: NASA-derived SAR product
+  post_source:
+    dataset: "OPERA Dynamic Surface Water Extent from Sentinel-1 (DSWx-S1) V1"
+    short_name: OPERA_L3_DSWX-S1_V1
+    granule_id: TODO
+    label: NASA-derived SAR product
+
+# Known traps in this area: rice paddies (still wet in early October), the Bagmati and
+# Lal Bakaiya river beds, and fish ponds. Expect some agricultural false positives, and
+# say so in the demo.
+params:
+  delta_db: 3.0
+  hand_max_m: 15.0
+  min_area_m2: 20000

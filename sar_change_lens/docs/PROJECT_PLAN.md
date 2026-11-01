@@ -75,6 +75,11 @@ answers that directly, with one type of change done carefully. We could not open
 page itself, so the team must confirm the title, requirements and suggested resources there
 before freezing scope ([section 13](#13-48-hour-schedule), hour 0).
 
+> **Update, 1 November 2026:** the team chose **Nepal with 2025 data**. NISAR has no
+> calibrated data for 2025, so that case uses Sentinel-1 processed by NASA ASF HyP3. See
+> [section 4.3](#43-team-decision-1-november-2026-nepal-2025-data) for the pathway and
+> what it costs in challenge fit.
+
 **Data pathway.**
 
 - **Primary data.** NISAR **L2 GCOV, PROVISIONAL** (L-band, radiometrically terrain-corrected
@@ -97,7 +102,7 @@ The LLM never detects anything.
 
 **What already exists in this repository.**
 
-- A working, tested starter pipeline and dashboard: 48 automated tests, a dry-run mode on
+- A working, tested starter pipeline and dashboard: 51 automated tests, a dry-run mode on
   clearly-labelled synthetic data, and fail-safe error handling.
 - A NISAR GCOV reader, tested against a mock file that follows the documented layout.
 - **Not yet done:** running on a real NISAR granule. That is the day-one task, because this
@@ -339,6 +344,65 @@ Preprocessing is normal in Earth observation. Hiding it is not. In the demo:
   `delta_db`) and show the map update.
 - **Never** demo on synthetic data without the red **SYNTHETIC DATA** banner. The dashboard
   enforces the banner, and the dry-run scene sits over open ocean on purpose.
+
+### 4.3 Team decision (1 November 2026): Nepal, 2025 data
+
+The team chose **Nepal** as the study area and **2025** as the data year. That choice
+changes the data pathway.
+
+**Event.** Flooding of the **Terai plains in Bara and Rautahat districts** (Madhesh Province)
+after extreme rain on **3–5 October 2025**. More than 330 mm of rain was reported in
+Rautahat, and the same storm caused deadly landslides in Ilam and Koshi River flooding
+further east. The case file is
+[`config/cases/nepal_bara_rautahat_oct2025_s1.yaml`](../config/cases/nepal_bara_rautahat_oct2025_s1.yaml).
+
+**Why the Terai and not the hills.** Radar flood mapping needs flat, low-lying ground. In
+Nepal's hills and mountains, layover, shadow and narrow valleys defeat a before/after
+method. That rules out:
+
+- the Ilam landslides (October 2025);
+- the Rasuwa glacial flood (8 July 2025).
+
+Alternative Terai events in 2025 (to scout with `find_pairs.py`):
+
+- **Kailali**, far west. International Charter activation 970 on 1 July 2025.
+- **Jhapa**, east. Flooding on 4–5 October 2025.
+
+**Data pathway for 2025.**
+
+| Role | Data | Label |
+|---|---|---|
+| Before/after radar | Copernicus Sentinel-1 IW GRD (ESA), turned into RTC γ⁰ power at 30 m by **NASA ASF HyP3 On Demand** (`find_pairs.py s1-grd … --hyp3-rtc N`) | NASA-affiliated or partner data (ESA observation, NASA processing) |
+| Reference | NASA JPL **OPERA DSWx-S1**. Near-global by design; **confirm Nepal tiles exist** for the dates | NASA-derived SAR product |
+| Terrain mask | ASF GLO-30 HAND | Supporting non-SAR data |
+| Optional rain context | NASA **GPM IMERG** rainfall for 3–5 October 2025 | Supporting non-SAR data |
+
+**Why not NISAR.**
+
+- NISAR's calibrated (PROVISIONAL) record starts **17 June 2026**.
+- Its pre-calibration BETA data covers a subset of **17 October 2025 – 20 January 2026**,
+  which is *after* this flood, and NASA marks it "not intended for use in scientific research".
+- OPERA RTC-S1 covers North America only, so it cannot serve Nepal either.
+
+**What this costs, said plainly.**
+
+1. **Challenge fit.** The 2026 Space Apps challenge this plan targets asks for **NISAR**
+   data. A Nepal-2025-only project uses **no NISAR data**. To keep the fit, add a second
+   Nepal Terai case from the **2026 monsoon (July–September 2026)** using NISAR GCOV
+   PROVISIONAL. The pipeline already supports it (`find_pairs.py nisar-gcov`), and the two
+   cases together show the same method on C-band (2025) and L-band (2026).
+2. **NASA-data authenticity.** The detector's input becomes ESA observations processed by
+   NASA. NASA's role is the processing (ASF HyP3), the reference (OPERA DSWx-S1), the
+   terrain layer (ASF) and optional rainfall (GPM). Say this exactly; do not call
+   Sentinel-1 "NASA data".
+3. **Validation strength.** DSWx-S1 is also made from Sentinel-1, so agreement with it is a
+   *consistency check*, not independent validation. A Nepali or international flood map for
+   these dates (Charter, UNOSAT, ICIMOD) would be a more independent comparison, if one exists.
+4. **Timing risk.** Terai floodwater can drain within days. Sentinel-1 revisits each track
+   every 6–12 days, so the first post-event pass may miss the peak. Check the dates
+   `find_pairs.py` returns before committing to the event.
+5. **Look-alikes.** In early October the Terai's rice paddies may still be wet, so expect
+   agricultural false positives. Show one in the demo rather than hide it.
 
 ---
 
@@ -866,7 +930,7 @@ sar_change_lens/
 │   └── dashboard.py              Streamlit dashboard (read-only)
 ├── scripts/
 │   └── find_pairs.py             search NISAR / OPERA pairs; optional download
-├── tests/                        48 tests: science, georeferencing, pipeline, dashboard, configs
+├── tests/                        51 tests: science, georeferencing, pipeline, dashboard, configs
 ├── data/raw/                     downloaded granules (git-ignored)
 └── outputs/                      pipeline results (git-ignored; force-add demo cases)
 ```
@@ -877,7 +941,7 @@ sar_change_lens/
 
 | # | Step | Commands / actions | Done when | Status |
 |---|---|---|---|---|
-| 1 | Environment setup | `python -m venv .venv && . .venv/bin/activate && pip install -r requirements-dev.txt && pytest` | 48 tests pass | Ready |
+| 1 | Environment setup | `python -m venv .venv && . .venv/bin/activate && pip install -r requirements-dev.txt && pytest` | 51 tests pass (2 skip without the optional anthropic package) | Ready |
 | 2 | Data acquisition | Earthdata Login for all; `python scripts/find_pairs.py nisar-gcov --bbox ... --event ...`; `--download N`; HAND tile from AWS; DSWx-S1 tiles | Two NISAR granules + HAND + reference on disk; IDs in YAML | **Day one** |
 | 3 | Data inspection | `h5ls -r`; the four checks in [section 9](#9-data-and-processing-pipeline); view the "before" image | CRS, transform, fill value and units confirmed | **Day one** |
 | 4 | Preprocessing | Reader with AOI bbox; alignment; Lee filter; check histograms in dB | Clean dB images on one grid | Code ready |
@@ -1233,7 +1297,7 @@ honestly, and we would rather ship one reliable layer than four unreliable ones.
   terrain masking) are standard in SAR flood mapping. The input data (NISAR GCOV provisional,
   OPERA RTC-S1 and DSWx-S1) are calibrated or validated by NASA, within their stated maturity.
 - **Validated by us:**
-  - So far, only the *software*, on synthetic data (48 automated tests).
+  - So far, only the *software*, on synthetic data (51 automated tests).
   - Case-level agreement with OPERA DSWx-S1 is measured during the hackathon and must be
     reported with its dates, masks and pixel counts.
 - **Experimental:**

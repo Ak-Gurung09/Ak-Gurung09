@@ -21,7 +21,7 @@ measured values.
 ```bash
 python -m venv .venv && . .venv/bin/activate      # Python 3.10-3.12
 pip install -r requirements-dev.txt               # rasterio wheels include GDAL
-pytest                                            # 48 tests, about 15 s
+pytest                                            # 51 tests, about 15 s
 python -m changelens.pipeline --dry-run           # SYNTHETIC test data (placed over the ocean)
 python -m changelens.pipeline --dry-run --no-change
 streamlit run app/dashboard.py                    # opens the dashboard
@@ -37,6 +37,15 @@ streamlit run app/dashboard.py                    # opens the dashboard
    python scripts/find_pairs.py nisar-gcov --bbox W S E N --event YYYY-MM-DD --download 0
    ```
    The fallback for North America is `opera-rtc`. The reference layer is `opera-dswx`.
+
+   **Nepal, 2025 (the team's chosen case).** NISAR has no calibrated 2025 data, so this case
+   uses Sentinel-1, processed to backscatter by NASA ASF HyP3. See
+   `config/cases/nepal_bara_rautahat_oct2025_s1.yaml` and section 4.3 of the plan.
+   ```bash
+   python scripts/find_pairs.py s1-grd --bbox 84.85 26.75 85.60 27.20 --event 2025-10-05 --days-after 12
+   python scripts/find_pairs.py s1-grd --bbox 84.85 26.75 85.60 27.20 --event 2025-10-05 --days-after 12 --hyp3-rtc 0
+   python scripts/find_pairs.py opera-dswx --bbox 84.85 26.75 85.60 27.20 --event 2025-10-05 --days-after 12
+   ```
 3. Copy `config/cases/TEMPLATE_nisar_gcov_flood.yaml`, fill in every `TODO` (paths, granule
    IDs, URLs), and set `status: ready`.
 4. Run the case:

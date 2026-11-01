@@ -17,6 +17,7 @@ pandas>=2.0
 # Data discovery / download (network; needs a free NASA Earthdata Login to download)
 asf_search>=8.0
 earthaccess>=0.9
+hyp3_sdk>=7.0      # ASF HyP3 On Demand: Sentinel-1 -> RTC backscatter (any region, e.g. Nepal 2025)
 
 # Optional: grounded plain-language rewrite of explanations (python -m changelens.pipeline --llm)
 # anthropic>=1.0

@@ -2,6 +2,8 @@
 
 from types import SimpleNamespace
 
+import pytest
+
 from changelens.explain import (DISCLAIMER_SENTENCE, check_grounded, evidence_for, llm_explanation,
                                 template_explanation)
 
@@ -37,6 +39,7 @@ class FakeClient:
 
 
 def test_llm_rewrite_accepted_only_when_grounded():
+    pytest.importorskip("anthropic")  # optional dependency
     good = ("Radar shows this 1.484 km2 area got 13.6 dB darker between 2026-07-01 and 2026-07-13, "
             "which is typical of new open water. Confidence is High (0.70). " + DISCLAIMER_SENTENCE)
     text, info = llm_explanation(EV, client=FakeClient(good))
@@ -48,5 +51,20 @@ def test_llm_rewrite_accepted_only_when_grounded():
 
 
 def test_llm_refusal_falls_back_to_template():
+    pytest.importorskip("anthropic")  # optional dependency
     text, info = llm_explanation(EV, client=FakeClient("", stop_reason="refusal"))
     assert info["source"] == "template" and info["reason"] == "model declined"
+
+
+def test_without_anthropic_package_the_template_is_used(monkeypatch):
+    import builtins
+    real_import = builtins.__import__
+
+    def fake_import(name, *args, **kwargs):
+        if name == "anthropic":
+            raise ImportError("not installed")
+        return real_import(name, *args, **kwargs)
+
+    monkeypatch.setattr(builtins, "__import__", fake_import)
+    text, info = llm_explanation(EV)
+    assert info["source"] == "template" and text == template_explanation(EV)
