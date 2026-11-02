@@ -1,0 +1,6 @@
+{
+  "name": "endless-memory",
+  "version": "0.1.0",
+  "description": "Automatic long-term memory: saves what matters after every turn and feeds it back after each compaction and in every new session, so a chat can go on indefinitely.",
+  "author": { "name": "ak-gurung09" }
+}

@@ -1,0 +1,10 @@
+{
+  "extraKnownMarketplaces": {
+    "ak-gurung09-mods": {
+      "source": { "source": "github", "repo": "ak-gurung09/ak-gurung09" }
+    }
+  },
+  "enabledPlugins": {
+    "endless-memory@ak-gurung09-mods": true
+  }
+}

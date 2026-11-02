@@ -1,0 +1,14 @@
+{
+  "name": "ak-gurung09-mods",
+  "owner": {
+    "name": "ak-gurung09"
+  },
+  "description": "Claude Code mods by ak-gurung09.",
+  "plugins": [
+    {
+      "name": "endless-memory",
+      "source": "./claude-mods/endless-memory",
+      "description": "Automatic long-term memory that survives compaction and new sessions, so a chat can go on indefinitely."
+    }
+  ]
+}
